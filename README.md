@@ -16,27 +16,27 @@ get_top_songs(num) - fetches the songs data from top songs section<br/>
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of song data.<br/>
-<br/><br/>
+<br/>
 
 get_new_releases(num) - fetches the albums data from new releases section<br/>
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of albums data.<br/>
-<br/><br/>
+<br/>
 
 get_featured_playlists(num) - fetches the playlists data from featured playlists section<br/>
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of playlists data.<br/>
-<br/><br/>
+<br/>
 
 Remaining functions are internal functions that are used by the functions mentioned above.<br/>
-<br/><br/><br/>
+<br/><br/>
 
 
 
 *search_scraper.py* fetches search results in the all formats - songs, albums, playlists.<br/>
-<br/><br/>
+<br/>
 
 search_songs(keyword, num) - fetches the search results matching songs data<br/>
     *keyword*-****required, string***<br/>
@@ -44,7 +44,7 @@ search_songs(keyword, num) - fetches the search results matching songs data<br/>
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of songs data items.<br/>
-<br/><br/>
+<br/>
 
 search_albums(keyword, num) - fetches the search results matching albums data<br/>
     *keyword*-****required, string***<br/>
@@ -52,7 +52,7 @@ search_albums(keyword, num) - fetches the search results matching albums data<br
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of albums data items.<br/>
-<br/><br/>
+<br/>
 
 search_playlists(keyword, num) - fetches the search results matching playlists data<br/>
     *keyword*-****required, string***<br/>
@@ -60,6 +60,6 @@ search_playlists(keyword, num) - fetches the search results matching playlists d
     num-****required, int***<br/>
       the number of data items to be returned<br/>
     Returns a list of playlists data items.<br/>
-<br/><br/>
+<br/>
 
 Remaining functions are internal functions that are used by the functions mentioned above.
