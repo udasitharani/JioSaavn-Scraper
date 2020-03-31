@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 import requests, json
 from bs4 import BeautifulSoup
 # import sys

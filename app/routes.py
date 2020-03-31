@@ -10,12 +10,14 @@ def index():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    # keyword = request.form['key']
-    # category = request.form['category']
-    # count = request.form['count']
-    keyword = 'ed sheeran'
-    category = 'song'
-    count = '4'
+    if(request.method=='POST'):
+        keyword = request.form['key']
+        category = request.form['category']
+        count = request.form['count']
+    elif(request.method=='GET'):
+        keyword = 'ed sheeran'
+        category = 'song'
+        count = '4'
     data = json.dumps(search_scraper.search(keyword, category, count))
     response = app.response_class(
         response=data,
@@ -24,14 +26,16 @@ def search():
     )
     return response
 
-@app.route('/recommendations')
+@app.route('/recommendations', methods=['GET', 'POST'])
 def recommend():
-    # category = request.form['category']
-    # count = request.form['count']
-    # language = request.form['language']
-    category = "songs"
-    count = '5'
-    language = 'english'
+    if(request.method=='POST'):
+        category = request.form['category']
+        count = request.form['count']
+        language = request.form['language']
+    elif(request.method=='GET'):
+        category = "songs"
+        count = '5'
+        language = 'english'
     data = json.dumps(home_scraper.fetch(category, count, language))
     response = app.response_class(
         response=data,
