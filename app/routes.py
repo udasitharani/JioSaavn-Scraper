@@ -1,6 +1,6 @@
 from app import app
 from flask import request
-import home_scraper, search_scraper
+import search_scraper, home_scraper
 import json
 
 
