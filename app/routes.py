@@ -8,11 +8,14 @@ import json
 def index():
     return '<h1>This is working!</h1>'
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
-    keyword = request.form['key']
-    category = request.form['category']
-    count = request.form['count']
+    # keyword = request.form['key']
+    # category = request.form['category']
+    # count = request.form['count']
+    keyword = 'ed sheeran'
+    category = 'song'
+    count = '4'
     data = json.dumps(search_scraper.search(keyword, category, count))
     response = app.response_class(
         response=data,
