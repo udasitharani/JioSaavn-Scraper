@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 # import sys
-# from importlib import reload
 # reload(sys)
 # sys.setdefaultencoding('utf8')
 
@@ -55,7 +54,7 @@ def fetch(category, count, language):
 # Get Weekly Top Songs
 def get_top_songs(num):
     global top_songs_soup, header
-    songs = []
+    songs = {}
     try:
         songs_soup = top_songs_soup.find('ol', {'class': 'chart-list highlight-first'})
         containers = songs_soup.select('li')
@@ -66,7 +65,7 @@ def get_top_songs(num):
             url  = containers[i].find('a')['href']
             res = requests.get(url, headers=header)
             item_soup = BeautifulSoup(res.content, 'html.parser')
-            songs.append(read_song_details(item_soup, url))
+            songs[i] = read_song_details(item_soup, url)
     except:
         return None
     return songs
@@ -74,7 +73,7 @@ def get_top_songs(num):
 # Get new albums 
 def get_new_releases(num):
     global new_releases_soup
-    releases = []
+    releases = {}
     try:
         containers = new_releases_soup.select('div.album-item')
         count = len(containers)
@@ -82,7 +81,7 @@ def get_new_releases(num):
             count = num
         for i in range(count):
             url  = containers[i].find('a')['href']
-            releases.append(read_album(containers[i], url))
+            releases[i] = read_album(containers[i], url)
     except:
         return None
     return releases
@@ -108,7 +107,7 @@ def read_album(tile, url):
 # Get featured releases
 def get_featured_playlists(num):
     global featured_playlists_soup
-    playlists = []
+    playlists = {}
     try:
         containers = featured_playlists_soup.select('div.album-item')
         count = len(containers)
@@ -117,7 +116,7 @@ def get_featured_playlists(num):
         for i in range(count):
             url = containers[i].find('a')['href']
             thumbnail = containers[i].find('div', {'class': 'album art'}).find('img')['src']
-            playlists.append(read_playlist(containers[i], url, thumbnail))
+            playlists[i] = read_playlist(containers[i], url, thumbnail)
     except:
         return None
     return playlists
@@ -144,13 +143,15 @@ def read_playlist(tile, url, thumbnail):
         
 def get_songs(soup):
     global header
-    songs = []
+    songs = {}
     try:
+        count = 0
         for item in soup.select('li:not(.hide).song-wrap'):
             url=item.find('span', {'class': 'title'}).find('a')['href']
             res = requests.get(url, headers = header)
             item_soup = BeautifulSoup(res.content, 'html.parser')        
-            songs.append(read_song_details(item_soup, url))
+            songs[count] = read_song_details(item_soup, url)
+            count += 1
     except:
         return None
     return songs

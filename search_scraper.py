@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*- 
 import requests, json
 from bs4 import BeautifulSoup
 # import sys
-# from importlib import reload
 # reload(sys)
 # sys.setdefaultencoding('utf8')
 
