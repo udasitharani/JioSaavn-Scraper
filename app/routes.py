@@ -15,7 +15,7 @@ def search():
         category = request.form['category']
         count = request.form['count']
     elif(request.method=='GET'):
-        keyword = 'ed sheeran'
+        keyword = 'something like that'
         category = 'song'
         count = '4'
     data = json.dumps(search_scraper.search(keyword, category, count))
