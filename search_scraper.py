@@ -17,8 +17,10 @@ def search(category, count, keyword):
         return search_playlists(keyword, int(count))
     elif(category=="albums"):
         return search_albums(keyword, int(count))
-    else:
+    elif(category=="songs"):
         return search_songs(keyword, int(count))
+    else:
+        return ["Invalid category"]
 
 
 # Search for songs

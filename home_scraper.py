@@ -25,8 +25,10 @@ def fetch(category, count, language):
             return get_featured_playlists(int(count))
         elif(category=='albums'):
             return get_new_releases(int(count))
-        else:
+        elif(category=="songs"):
             return get_top_songs(int(count))
+        else:
+            return ['Invalid Category']
     except:
         return None
 
