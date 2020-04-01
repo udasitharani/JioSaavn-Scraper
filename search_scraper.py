@@ -12,10 +12,10 @@ PLAYLISTS_URL = "/playlist/"
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
 
 # Base method
-def search(keyword, category, count):
-    if(category=="playlist"):
+def search(category, count, keyword):
+    if(category=="playlists"):
         return search_playlists(keyword, int(count))
-    elif(category=="album"):
+    elif(category=="albums"):
         return search_albums(keyword, int(count))
     else:
         return search_songs(keyword, int(count))

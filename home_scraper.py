@@ -15,6 +15,21 @@ new_releases_soup = None
 featured_playlists_soup = None
 top_songs_soup = None
 
+def fetch(category, count, language):
+    try:
+        if(language=="english"):
+            init_soup_english()
+        else:
+            init_soup_hindi()
+        if(category=="playlists"):
+            return get_featured_playlists(int(count))
+        elif(category=='albums'):
+            return get_new_releases(int(count))
+        else:
+            return get_top_songs(int(count))
+    except:
+        return None
+
 def init_soup_hindi():
     global header, home_soup, new_releases_soup, featured_playlists_soup, top_songs_soup, BASE_URL, HOME_URL, HINDI_HOME_URL
     try:
@@ -34,21 +49,6 @@ def init_soup_english():
         new_releases_soup = home_soup.find('section', {'id': 'new-releases'})
         featured_playlists_soup = home_soup.find('section', {'id': 'featured'}).find('div', {'id': 'featured-playlists'})
         top_songs_soup = home_soup.find('section', {'id': 'top-15'})
-    except:
-        return None
-
-def fetch(category, count, language):
-    try:
-        if(language=="english"):
-            init_soup_english()
-        else:
-            init_soup_hindi()
-        if(category=="playlists"):
-            return get_featured_playlists(int(count))
-        elif(category=='albums'):
-            return get_new_releases(int(count))
-        else:
-            return get_top_songs(int(count))
     except:
         return None
 
