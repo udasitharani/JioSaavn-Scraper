@@ -68,7 +68,7 @@ def get_top_songs(num):
         url  = containers[i].find('a')['href']
         res = requests.get(url, headers=header)
         item_soup = BeautifulSoup(res.content, 'html.parser')
-        songs[i] = read_song_details(item_soup, url)
+        songs["Songs " + str(i)] = read_song_details(item_soup, url)
     # except:
         # return None
     return songs
@@ -84,7 +84,7 @@ def get_new_releases(num):
         count = num
     for i in range(count):
         url  = containers[i].find('a')['href']
-        releases[i] = read_album(containers[i], url)
+        releases["Album " + str(i)] = read_album(containers[i], url)
     # except:
     #     return None
     return releases
@@ -99,10 +99,21 @@ def read_album(tile, url):
     soup = BeautifulSoup(res.content, 'html.parser')
     details['thumbnail'] = soup.find('div', {'class': 'art solo-art'}).find('img')['src']
     details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
-    details['artist'] = ' '.join(soup.find('h2', {'class': 'page-subtitle'}).find('a').text.split())
     literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
     details['duration'] = literals[-1]
-    details['songs'] = get_songs(soup)
+    details['artists'] = []
+    details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
+    artists = literals[literals.index('by')+1:literals.index('·')]
+    artists[-1] = artists[-1]+','
+    i = 0
+    a = ''
+    while(i<len(artists)):
+        a += ' '+artists[i]
+        if(a[-1]==','):
+            a = a[:-1]
+            details['artists'].append(a.strip())
+            a = ''
+        i+=1
     # except:
     #     return None
     return details
@@ -119,7 +130,7 @@ def get_featured_playlists(num):
     for i in range(count):
         url = containers[i].find('a')['href']
         thumbnail = containers[i].find('div', {'class': 'album art'}).find('img')['src']
-        playlists[str(i) + " playlist"] = read_playlist(containers[i], url, thumbnail)
+        playlists["Playlist " + str(i) ] = read_playlist(containers[i], url, thumbnail)
     # except:
         # return None
     return playlists
@@ -132,21 +143,22 @@ def read_playlist(tile, url, thumbnail):
     # try:
     res = requests.get(url, headers=header)
     soup = BeautifulSoup(res.content, 'html.parser')
-    f = open('temp.html', 'w')
-    f.write(str(soup))
+    details['url'] = url
     details['thumbnail'] = thumbnail
     details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
     literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
     details['duration'] = literals[-1]
-    details['songs'] = get_songs(soup)
+    details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
     # except:
     #     return None    
     return details
 
         
-def get_songs(soup):
+def get_songs(url):
     global header
     songs = {}
+    res = requests.get(url, headers = header)
+    soup = BeautifulSoup(res.content, 'html.parser')
     # try:
     count = 0
     for item in soup.select('li:not(.hide).song-wrap'):
@@ -188,10 +200,10 @@ def read_song_details(soup, url):
 # Reading the lyrics of songs
 def read_song_lyrics(soup):
     global header
-    # try:
-    url = soup.find('div', {'class': 'page-group lyrics basic-copy top'}).find('a', {'class': 'btn light outline'})['href']
-    # except:
-        # return "N/A"
+    try:
+        url = soup.find('div', {'class': 'page-group lyrics basic-copy top'}).find('a', {'class': 'btn light outline'})['href']
+    except:
+        return "N/A"
     # try:
     res = requests.get(url, headers=header)
     soup = BeautifulSoup(res.content, 'html.parser')

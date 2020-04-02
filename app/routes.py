@@ -8,41 +8,19 @@ import json
 def index():
     return '<h1>This is working!</h1>'
 
-# @app.route('/search', methods=['GET', 'POST'])
-# def search():
-#     if(request.method=='POST'):
-#         keyword = request.form['key']
-#         category = request.form['category']
-#         count = request.form['count']
-#     elif(request.method=='GET'):
-#         keyword = 'something like that'
-#         category = 'song'
-#         count = '4'
-#     data = json.dumps(search_scraper.search(keyword, category, count))
-#     response = app.response_class(
-#         response=data,
-#         status=200,
-#         mimetype='application/json'
-#     )
-#     return response
+@app.route('/<category>/<name>/<id>', methods=['POST', 'GET'])
+def get_songs(category, name, id):
+    data = json.dumps(get_songs_from_scraper(category, name, id))
+    response = app.response_class(
+        response=data,
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
-# @app.route('/recommendations', methods=['GET', 'POST'])
-# def recommend():
-#     if(request.method=='POST'):
-#         category = request.form['category']
-#         count = request.form['count']
-#         language = request.form['language']
-#     elif(request.method=='GET'):
-#         category = "songs"
-#         count = '5'
-#         language = 'english'
-#     data = json.dumps(home_scraper.fetch(category, count, language))
-#     response = app.response_class(
-#         response=data,
-#         status=200,
-#         mimetype='application/json'
-#     )
-#     return response
+def get_songs_from_scraper(category, name, id):
+    url = home_scraper.BASE_URL + '/' + category + '/' + name + '/' + id
+    return home_scraper.get_songs(url)
 
 @app.route('/songs', methods=['GET', 'POST'])
 def top_songs():
@@ -80,7 +58,7 @@ def new_albums():
  
 @app.route('/playlists', methods=['GET', 'POST'])
 def featured_playlists():
-    category = 'songs'
+    category = 'playlists'
     if(request.method=='POST'):
         count = request.form['count']
         language = request.form['language']
@@ -119,7 +97,7 @@ def search_albums():
         count = request.form['count']
         keyword = request.form['key']
     else:
-        count = 5
+        count = 800
         keyword = "the weeknd"
     data = json.dumps(search_scraper.search(category, count, keyword))
     response = app.response_class(
