@@ -97,7 +97,7 @@ def search_albums():
         count = request.form['count']
         keyword = request.form['key']
     else:
-        count = 800
+        count = 5
         keyword = "the weeknd"
     data = json.dumps(search_scraper.search(category, count, keyword))
     response = app.response_class(

@@ -16,123 +16,123 @@ featured_playlists_soup = None
 top_songs_soup = None
 
 def fetch(category, count, language):
-    # try:
-    if(language=="english"):
-        init_soup_english()
-    else:
-        init_soup_hindi()
-    if(category=="playlists"):
-        return get_featured_playlists(int(count))
-    elif(category=='albums'):
-        return get_new_releases(int(count))
-    elif(category=="songs"):
-        return get_top_songs(int(count))
-    else:
-        return ['Invalid Category']
-    # except:
-        # return None
+    try:
+        if(language=="english"):
+            init_soup_english()
+        else:
+            init_soup_hindi()
+        if(category=="playlists"):
+            return get_featured_playlists(int(count))
+        elif(category=='albums'):
+            return get_new_releases(int(count))
+        elif(category=="songs"):
+            return get_top_songs(int(count))
+        else:
+            return ['Invalid Category']
+    except:
+        return None
 
 def init_soup_hindi():
     global header, home_soup, new_releases_soup, featured_playlists_soup, top_songs_soup, BASE_URL, HOME_URL, HINDI_HOME_URL
-    # try:
-    response = requests.get(BASE_URL + HOME_URL + HINDI_HOME_URL, headers=header)
-    home_soup = BeautifulSoup(response.content, "html.parser")
-    new_releases_soup = home_soup.find('section', {'id': 'new-releases'})
-    featured_playlists_soup = home_soup.find('section', {'id': 'featured'}).find('div', {'id': 'featured-playlists'})
-    top_songs_soup = home_soup.find('section', {'id': 'top-15'})
-    # except:
-        # return None
+    try:
+        response = requests.get(BASE_URL + HOME_URL + HINDI_HOME_URL, headers=header)
+        home_soup = BeautifulSoup(response.content, "html.parser")
+        new_releases_soup = home_soup.find('section', {'id': 'new-releases'})
+        featured_playlists_soup = home_soup.find('section', {'id': 'featured'}).find('div', {'id': 'featured-playlists'})
+        top_songs_soup = home_soup.find('section', {'id': 'top-15'})
+    except:
+        pass
 
 def init_soup_english():
     global header, home_soup, new_releases_soup, featured_playlists_soup, top_songs_soup, BASE_URL, HOME_URL, ENGLISH_HOME_URL
-    # try:
-    response = requests.get(BASE_URL + HOME_URL + ENGLISH_HOME_URL, headers=header)
-    home_soup = BeautifulSoup(response.content, "html.parser")
-    new_releases_soup = home_soup.find('section', {'id': 'new-releases'})
-    featured_playlists_soup = home_soup.find('section', {'id': 'featured'}).find('div', {'id': 'featured-playlists'})
-    top_songs_soup = home_soup.find('section', {'id': 'top-15'})
-    # except:
-        # return None
+    try:
+        response = requests.get(BASE_URL + HOME_URL + ENGLISH_HOME_URL, headers=header)
+        home_soup = BeautifulSoup(response.content, "html.parser")
+        new_releases_soup = home_soup.find('section', {'id': 'new-releases'})
+        featured_playlists_soup = home_soup.find('section', {'id': 'featured'}).find('div', {'id': 'featured-playlists'})
+        top_songs_soup = home_soup.find('section', {'id': 'top-15'})
+    except:
+        pass
 
 # Get Weekly Top Songs
 def get_top_songs(num):
     global top_songs_soup, header
     songs = {}
-    # try:
-    songs_soup = top_songs_soup.find('ol', {'class': 'chart-list highlight-first'})
-    containers = songs_soup.select('li')
-    count = len(containers)
-    if(num<count):
-        count = num
-    for i in range(count):
-        url  = containers[i].find('a')['href']
-        res = requests.get(url, headers=header)
-        item_soup = BeautifulSoup(res.content, 'html.parser')
-        songs["Songs " + str(i)] = read_song_details(item_soup, url)
-    # except:
-        # return None
+    try:
+        songs_soup = top_songs_soup.find('ol', {'class': 'chart-list highlight-first'})
+        containers = songs_soup.select('li')
+        count = len(containers)
+        if(num<count):
+            count = num
+        for i in range(count):
+            url  = containers[i].find('a')['href']
+            res = requests.get(url, headers=header)
+            item_soup = BeautifulSoup(res.content, 'html.parser')
+            songs["Songs " + str(i)] = read_song_details(item_soup, url)
+    except:
+        pass
     return songs
 
 # Get new albums 
 def get_new_releases(num):
     global new_releases_soup
     releases = {}
-    # try:
-    containers = new_releases_soup.select('div.album-item')
-    count = len(containers)
-    if(num<count):
-        count = num
-    for i in range(count):
-        url  = containers[i].find('a')['href']
-        releases["Album " + str(i)] = read_album(containers[i], url)
-    # except:
-    #     return None
+    try:
+        containers = new_releases_soup.select('div.album-item')
+        count = len(containers)
+        if(num<count):
+            count = num
+        for i in range(count):
+            url  = containers[i].find('a')['href']
+            releases["Album " + str(i)] = read_album(containers[i], url)
+    except:
+        pass
     return releases
 
 #Extract data from the song tiles
 def read_album(tile, url):
     global header
     details = {}
-    # try:
-    details['url'] = url
-    res = requests.get(details['url'], headers=header)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    details['thumbnail'] = soup.find('div', {'class': 'art solo-art'}).find('img')['src']
-    details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
-    literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
-    details['duration'] = literals[-1]
-    details['artists'] = []
-    details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
-    artists = literals[literals.index('by')+1:literals.index('·')]
-    artists[-1] = artists[-1]+','
-    i = 0
-    a = ''
-    while(i<len(artists)):
-        a += ' '+artists[i]
-        if(a[-1]==','):
-            a = a[:-1]
-            details['artists'].append(a.strip())
-            a = ''
-        i+=1
-    # except:
-    #     return None
+    try:
+        details['url'] = url
+        res = requests.get(details['url'], headers=header)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        details['thumbnail'] = soup.find('div', {'class': 'art solo-art'}).find('img')['src']
+        details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
+        literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
+        details['duration'] = literals[-1]
+        details['artists'] = []
+        details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
+        artists = literals[literals.index('by')+1:literals.index('·')]
+        artists[-1] = artists[-1]+','
+        i = 0
+        a = ''
+        while(i<len(artists)):
+            a += ' '+artists[i]
+            if(a[-1]==','):
+                a = a[:-1]
+                details['artists'].append(a.strip())
+                a = ''
+            i+=1
+    except:
+        pass
     return details
 
 # Get featured releases
 def get_featured_playlists(num):
     global featured_playlists_soup
     playlists = {}
-    # try:
-    containers = featured_playlists_soup.select('div.album-item')
-    count = len(containers)
-    if(num<count):
-        count = num
-    for i in range(count):
-        url = containers[i].find('a')['href']
-        thumbnail = containers[i].find('div', {'class': 'album art'}).find('img')['src']
-        playlists["Playlist " + str(i) ] = read_playlist(containers[i], url, thumbnail)
-    # except:
-        # return None
+    try:
+        containers = featured_playlists_soup.select('div.album-item')
+        count = len(containers)
+        if(num<count):
+            count = num
+        for i in range(count):
+            url = containers[i].find('a')['href']
+            thumbnail = containers[i].find('div', {'class': 'album art'}).find('img')['src']
+            playlists["Playlist " + str(i) ] = read_playlist(containers[i], url, thumbnail)
+    except:
+        pass
     return playlists
     
 
@@ -140,17 +140,17 @@ def get_featured_playlists(num):
 def read_playlist(tile, url, thumbnail):
     global header
     details = {}
-    # try:
-    res = requests.get(url, headers=header)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    details['url'] = url
-    details['thumbnail'] = thumbnail
-    details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
-    literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
-    details['duration'] = literals[-1]
-    details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
-    # except:
-    #     return None    
+    try:
+        res = requests.get(url, headers=header)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        details['url'] = url
+        details['thumbnail'] = thumbnail
+        details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
+        literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
+        details['duration'] = literals[-1]
+        details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
+    except:
+        pass
     return details
 
         
@@ -159,42 +159,42 @@ def get_songs(url):
     songs = {}
     res = requests.get(url, headers = header)
     soup = BeautifulSoup(res.content, 'html.parser')
-    # try:
-    count = 0
-    for item in soup.select('li:not(.hide).song-wrap'):
-        url=item.find('span', {'class': 'title'}).find('a')['href']
-        res = requests.get(url, headers = header)
-        item_soup = BeautifulSoup(res.content, 'html.parser')        
-        songs[count] = read_song_details(item_soup, url)
-        count += 1
-    # except:
-        # return None
+    try:
+        count = 0
+        for item in soup.select('li:not(.hide).song-wrap'):
+            url=item.find('span', {'class': 'title'}).find('a')['href']
+            res = requests.get(url, headers = header)
+            item_soup = BeautifulSoup(res.content, 'html.parser')        
+            songs[count] = read_song_details(item_soup, url)
+            count += 1
+    except:
+        pass
     return songs
 
 def read_song_details(soup, url):
     song = {}
-    # try:
-    song['url'] = url
-    song['thumbnail'] = soup.find('div', {'class': 'solo-art'}).find('img')['src']
-    song['title'] = ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
-    song['lyrics'] = read_song_lyrics(soup)
-    literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
-    song['album'] = ' '.join(literals[:literals.index('by')])
-    song['duration'] = literals[-1]
-    artists = literals[literals.index('by')+1:literals.index('·')]
-    artists[-1] = artists[-1]+','
-    i = 0
-    a = ''
-    song['artists'] = []
-    while(i<len(artists)):
-        a += ' '+artists[i]
-        if(a[-1]==','):
-            a = a[:-1]
-            song['artists'].append(a.strip())
-            a = ''
-        i+=1
-    # except:
-        # return None
+    try:
+        song['url'] = url
+        song['thumbnail'] = soup.find('div', {'class': 'solo-art'}).find('img')['src']
+        song['title'] = ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
+        song['lyrics'] = read_song_lyrics(soup)
+        literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
+        song['album'] = ' '.join(literals[:literals.index('by')])
+        song['duration'] = literals[-1]
+        artists = literals[literals.index('by')+1:literals.index('·')]
+        artists[-1] = artists[-1]+','
+        i = 0
+        a = ''
+        song['artists'] = []
+        while(i<len(artists)):
+            a += ' '+artists[i]
+            if(a[-1]==','):
+                a = a[:-1]
+                song['artists'].append(a.strip())
+                a = ''
+            i+=1
+    except:
+        pass
     return song
 
 # Reading the lyrics of songs
@@ -204,13 +204,13 @@ def read_song_lyrics(soup):
         url = soup.find('div', {'class': 'page-group lyrics basic-copy top'}).find('a', {'class': 'btn light outline'})['href']
     except:
         return "N/A"
-    # try:
-    res = requests.get(url, headers=header)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    lyrics = str(soup.find('p', {'class': 'lyrics'}))
-    lyrics = lyrics[lyrics.index('>')+1:lyrics.index('</p>')]
-    while('<br/>' in lyrics):
-        lyrics = lyrics[:lyrics.index('<br/>')] + '\n' + lyrics[lyrics.index('<br/>')+5:]
-    # except:
-        # return None
+    try:
+        res = requests.get(url, headers=header)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        lyrics = str(soup.find('p', {'class': 'lyrics'}))
+        lyrics = lyrics[lyrics.index('>')+1:lyrics.index('</p>')]
+        while('<br/>' in lyrics):
+            lyrics = lyrics[:lyrics.index('<br/>')] + '\n' + lyrics[lyrics.index('<br/>')+5:]
+    except:
+        pass
     return lyrics
