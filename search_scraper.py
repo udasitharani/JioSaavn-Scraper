@@ -104,7 +104,7 @@ def read_album(tile, url):
         details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
         literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
         details['duration'] = literals[-1]
-        details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
+        # details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
         artists = literals[literals.index('by')+1:literals.index('·')]
         artists[-1] = artists[-1]+','
         i = 0
@@ -165,7 +165,7 @@ def read_playlist(tile, url, thumbnail):
         details['title'] =  ' '.join(soup.find('h1', {'class': 'page-title'}).text.split())
         literals = soup.find('h2', {'class': 'page-subtitle'}).text.split()
         details['duration'] = literals[-1]
-        details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
+        # details['count'] = ' '.join(literals[literals.index('·')+1 : len(literals)-1-literals[-1::-1].index('·')])
     except:
         pass
     return details
